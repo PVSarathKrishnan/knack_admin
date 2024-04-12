@@ -1,0 +1,90 @@
+{
+  "project_info": {
+    "project_number": "668992767253",
+    "project_id": "knack---the-learning-platform",
+    "storage_bucket": "knack---the-learning-platform.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:668992767253:android:bc610a58d72484610f151c",
+        "android_client_info": {
+          "package_name": "com.example.knack"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "668992767253-jugmmq1gpe94j1k9k77jmv0gdgrm6eoq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.knack",
+            "certificate_hash": "a298ff2ceb9def63b2fd38787bc8212013c458da"
+          }
+        },
+        {
+          "client_id": "668992767253-6c7gbpu7df6bhtgqopmubp8718qnphqi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAnz9E5KFOMHLJoTcIta8bEIS4YN-Q-f1s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "668992767253-6c7gbpu7df6bhtgqopmubp8718qnphqi.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "668992767253-g39gonku5qajj6774h8trbdncl9fipn8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.knack"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:668992767253:android:388c530adbd3742b0f151c",
+        "android_client_info": {
+          "package_name": "com.example.knack_admin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "668992767253-6c7gbpu7df6bhtgqopmubp8718qnphqi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAnz9E5KFOMHLJoTcIta8bEIS4YN-Q-f1s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "668992767253-6c7gbpu7df6bhtgqopmubp8718qnphqi.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "668992767253-g39gonku5qajj6774h8trbdncl9fipn8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.knack"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
