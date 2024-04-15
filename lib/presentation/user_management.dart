@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:knack_admin/Domain/infrastructure/user_repository.dart';
+import 'package:knack_admin/presentation/Custom%20Widgets/loader.dart';
 import 'package:knack_admin/presentation/style/text_style.dart';
 
 class UserDetailsScreen extends StatefulWidget {
@@ -10,6 +12,9 @@ class UserDetailsScreen extends StatefulWidget {
 }
 
 class _UserDetailsScreenState extends State<UserDetailsScreen> {
+  final UserRepository _userRepository =
+      UserRepository(); // Instance of UserRepository
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,11 +38,11 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
           ),
           child: SingleChildScrollView(
             child: FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
-              future: FirebaseFirestore.instance.collection('users').get(),
+              future: _userRepository.getUsers(),
               builder: (BuildContext context,
                   AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
+                  return CustomLoaderWidget();
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 } else {
@@ -52,14 +57,18 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                     ],
                     rows: snapshot.data!.docs.map(
                       (document) {
-                        int rowIndex = snapshot.data!.docs.indexOf(document) + 1;
-                        Map<String, dynamic> data = document.data()!;
+                        int rowIndex =
+                            snapshot.data!.docs.indexOf(document) + 1;
+                        Map<String, dynamic> data = document.data();
                         return DataRow(cells: [
-                          DataCell(Text(rowIndex.toString(), style: t1)), // sl/no starts from 1
+                          DataCell(Text(rowIndex.toString(),
+                              style: t1)), // sl/no starts from 1
                           DataCell(Text(data['name'].toString(), style: t1)),
                           DataCell(Text(data['email'].toString(), style: t1)),
-                          DataCell(Text(data['course_selected'].toString(), style: t1)),
-                          DataCell(Text(data['premium_course'].toString(), style: t1)),
+                          DataCell(Text(data['course_selected'].toString(),
+                              style: t1)),
+                          DataCell(Text(data['premium_course'].toString(),
+                              style: t1)),
                         ]);
                       },
                     ).toList(),

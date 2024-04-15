@@ -25,16 +25,15 @@ class _ControllerScreenState extends State<ControllerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 45, 221, 51),
+      backgroundColor: Colors.green,
       body: Row(
         children: [
           SideNavigationBar(
             expandable: true,
             initiallyExpanded: false,
-
             theme: SideNavigationBarTheme(
               itemTheme: SideNavigationBarItemTheme(
-                  selectedItemColor: Color.fromARGB(255, 40, 226, 46),
+                  selectedItemColor: Colors.green,
                   selectedBackgroundColor: Colors.black,
                   unselectedItemColor: Colors.white),
               togglerTheme: SideNavigationBarTogglerTheme(
@@ -80,9 +79,11 @@ class _ControllerScreenState extends State<ControllerScreen> {
             ),
             selectedIndex: _selectedIndex,
             items: [
+             
               SideNavigationBarItem(
                 icon: Icons.home_filled,
                 label: "Home",
+                
               ),
               SideNavigationBarItem(
                 icon: Icons.book,

@@ -29,7 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
       backgroundColor: Colors.black,
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 600),
+          padding: const EdgeInsets.symmetric(horizontal: 500),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

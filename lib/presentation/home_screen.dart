@@ -63,7 +63,7 @@ class HomeScreen extends StatelessWidget {
       margin: EdgeInsets.symmetric(horizontal: 400),
       padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Color.fromARGB(255, 40, 226, 46),
+        color: Colors.green,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
