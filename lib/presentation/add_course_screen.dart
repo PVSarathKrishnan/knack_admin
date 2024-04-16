@@ -12,7 +12,11 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(child: Text("Add course"),),
+      body: Center(child:Column(
+        children: [
+          Text("Add Course")
+        ],
+      )),
     );
   }
 }

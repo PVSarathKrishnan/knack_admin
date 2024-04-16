@@ -5,4 +5,4 @@ sealed class FetchUserEvent {
   const FetchUserEvent();
 }
 
-class FetchUsers extends FetchUserEvent {}
+class FetchUserLoadEvent extends FetchUserEvent {}

@@ -1,13 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:knack_admin/Domain/model/user_model.dart';
 
-class UserRepository {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
-  Future<QuerySnapshot<Map<String, dynamic>>> getUsers() async {
+class UserRepo {
+  Future<List<UserModel>> getUsers() async {
+    List<UserModel> userList = [];
     try {
-      return await _firestore.collection('users').get();
+      final userData =
+          await FirebaseFirestore.instance.collection("users").get();
+      userData.docs.forEach((element) {
+        final data = element.data();
+
+        final user = UserModel(name: data["name"], email: data["email"]);
+        userList.add(user);
+      });
+      return userList;
     } catch (e) {
-      throw Exception('Failed to fetch users: $e');
+     debugPrint("exception getting user  : ${e}");
     }
+    return userList;
   }
 }

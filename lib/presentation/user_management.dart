@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:knack_admin/Domain/infrastructure/user_repository.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:knack_admin/application/bloc/bloc/fetch_user_bloc.dart';
 import 'package:knack_admin/presentation/Custom%20Widgets/loader.dart';
 import 'package:knack_admin/presentation/style/text_style.dart';
 
@@ -12,11 +12,11 @@ class UserDetailsScreen extends StatefulWidget {
 }
 
 class _UserDetailsScreenState extends State<UserDetailsScreen> {
-  final UserRepository _userRepository =
-      UserRepository(); // Instance of UserRepository
+  // Instance of UserRepository
 
   @override
   Widget build(BuildContext context) {
+    context.read<FetchUserBloc>().add(FetchUserLoadEvent());
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -37,41 +37,29 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
             ],
           ),
           child: SingleChildScrollView(
-            child: FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
-              future: _userRepository.getUsers(),
-              builder: (BuildContext context,
-                  AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CustomLoaderWidget();
-                } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                } else {
+            child: BlocBuilder<FetchUserBloc, FetchUserState>(
+              builder: (context, state) {
+                if (state is FetchUserLoadedState) {
                   return DataTable(
-                    headingRowHeight: 60,
+                    headingRowHeight: 50,
                     columns: [
                       DataColumn(label: Text('sl/no', style: t1)),
                       DataColumn(label: Text('Name', style: t1)),
                       DataColumn(label: Text('Email', style: t1)),
-                      DataColumn(label: Text('Course Selected', style: t1)),
-                      DataColumn(label: Text('Premium Course', style: t1)),
                     ],
-                    rows: snapshot.data!.docs.map(
-                      (document) {
-                        int rowIndex =
-                            snapshot.data!.docs.indexOf(document) + 1;
-                        Map<String, dynamic> data = document.data();
-                        return DataRow(cells: [
-                          DataCell(Text(rowIndex.toString(),
-                              style: t1)), // sl/no starts from 1
-                          DataCell(Text(data['name'].toString(), style: t1)),
-                          DataCell(Text(data['email'].toString(), style: t1)),
-                          DataCell(Text(data['course_selected'].toString(),
-                              style: t1)),
-                          DataCell(Text(data['premium_course'].toString(),
-                              style: t1)),
-                        ]);
-                      },
-                    ).toList(),
+                    rows: List<DataRow>.generate(
+                      state.userList.length,
+                      (index) => DataRow(cells: [
+                        DataCell(Text((index + 1).toString(), style: t1)),
+                        DataCell(Text(state.userList[index].name, style: t1)),
+                        DataCell(Text(state.userList[index].email, style: t1)),
+                        // Add more DataCell widgets if needed
+                      ]),
+                    ),
+                  );
+                } else {
+                  return Center(
+                    child: CustomLoaderWidget(),
                   );
                 }
               },
