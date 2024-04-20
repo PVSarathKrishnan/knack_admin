@@ -9,7 +9,7 @@ class CustomLoaderWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Lottie.asset("lib/assets/load.json"),
+      child: Lottie.asset("lib/assets/load.json",height: 500,width: 500),
     );
   }
 }
