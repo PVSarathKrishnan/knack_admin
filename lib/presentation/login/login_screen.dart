@@ -133,7 +133,7 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
       controller: controller,
       decoration: InputDecoration(
-          fillColor: Color.fromARGB(255, 0, 0, 0),
+          fillColor: Color.fromARGB(255, 19, 19, 19),
           filled: true,
           label: Text(
             label,
@@ -143,7 +143,7 @@ class _LoginScreenState extends State<LoginScreen> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12),borderSide: BorderSide(color: Colors.white))),
     );
   }
 }

@@ -14,19 +14,23 @@ class CourseBloc extends Bloc<CourseEvent, CourseState> {
     on<EditCourseEvent>(editCourseToFirebase);
     on<DeleteCourseEvent>(deleteCourseToFirebase);
   }
-
   FutureOr<void> addCourseToFirebase(
-      AddCourseEvent event, Emitter<CourseState> emit) async {
+    AddCourseEvent event,
+    Emitter<CourseState> emit,
+  ) async {
+    emit(LoadingState()); // Emit LoadingState 
+
     try {
+      print("Adding course data: ${event.data}"); // Log course data
       await FirebaseFirestore.instance
           .collection("courses")
           .doc(event.CourseId)
           .set(event.data)
-          .then((value) {
-        debugPrint("add course success");
-      });
+          .then((_) => emit(CourseAdded())); // Emit success state
+      print("Course added successfully!");
     } on FirebaseException catch (e) {
-      debugPrint("add course ${e.message}");
+      emit(CourseError(message: e.message!)); // Emit error state
+      print("add course exception: ${e.message}");
     }
   }
 

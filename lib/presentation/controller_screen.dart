@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:knack_admin/presentation/course/course_management.dart';
+import 'package:knack_admin/presentation/logout/user/user_management.dart';
+import 'package:knack_admin/presentation/revenue/revenue_management.dart';
+import 'package:knack_admin/presentation/settings/settings.dart';
 import 'package:side_navigation/side_navigation.dart';
 
 // Import your screen classes (replace with actual implementations)
-import 'home_screen.dart'; // Assuming you have a home_screen.dart file
-import 'add_course_screen.dart'; // Assuming you have an add_course_screen.dart file
-import 'logout_screen.dart'; // Assuming you have a logout_screen.dart file
+import 'home/home_screen.dart'; // Assuming you have a home_screen.dart file
+import 'course/add_course_screen.dart'; // Assuming you have an add_course_screen.dart file
+import 'logout/logout_screen.dart'; // Assuming you have a logout_screen.dart file
 
 class ControllerScreen extends StatefulWidget {
   const ControllerScreen({Key? key}) : super(key: key);
@@ -17,7 +21,12 @@ class _ControllerScreenState extends State<ControllerScreen> {
   final List<Widget> _screens = [
     const HomeScreen(),
     const AddCourseScreen(),
+    const UserDetailsScreen(),
+    const CourseManagementScreen(),
+    const RevenueManagementScreen(),
+    const SettingsScreen(),
     const LogoutScreen(),
+    
   ];
 
   int _selectedIndex = 0; // Track the selected index
@@ -86,9 +95,25 @@ class _ControllerScreenState extends State<ControllerScreen> {
                 
               ),
               SideNavigationBarItem(
-                icon: Icons.book,
+                icon: Icons.add_circle_outline_sharp,
                 label: "Add Course",
               ),
+              SideNavigationBarItem(
+                icon: Icons.menu_book_sharp,
+                label: "Course Management",
+              ),
+              SideNavigationBarItem(
+                icon: Icons.auto_graph_sharp,
+                label: "Revenue Management",
+              ),
+              SideNavigationBarItem(
+                icon: Icons.settings,
+                label: "Settings",
+              ),
+              // SideNavigationBarItem(
+              //   icon: Icons.feedback,
+              //   label: "Feedback",
+              // ),
               SideNavigationBarItem(
                 icon: Icons.logout,
                 label: "Logout",

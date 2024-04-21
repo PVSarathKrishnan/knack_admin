@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:knack_admin/presentation/user_management.dart';
+import 'package:knack_admin/presentation/logout/user/user_management.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key});

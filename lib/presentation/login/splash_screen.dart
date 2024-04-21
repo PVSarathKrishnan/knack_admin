@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:knack_admin/main.dart';
 import 'package:knack_admin/presentation/controller_screen.dart';
-import 'package:knack_admin/presentation/login_screen.dart';
+import 'package:knack_admin/presentation/login/login_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
