@@ -37,7 +37,7 @@ class _SplashScreenState extends State<SplashScreen> {
     final _sharedprefs = await SharedPreferences.getInstance();
     final _userLoggedIn = _sharedprefs.getBool(SAVE_KEY_NAME);
     if (_userLoggedIn == null || _userLoggedIn == false) {
-      await Future.delayed(Duration(seconds: 3));
+      await Future.delayed(Duration(seconds: 1));
       Navigator.of(context)
           .pushReplacement(MaterialPageRoute(builder: (ctx) => LoginScreen()));
     } else {

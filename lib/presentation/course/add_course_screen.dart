@@ -133,10 +133,11 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
                                 if (state is ImageUpdateState) {
                                   return GestureDetector(
                                     onTap: () {
+                                       newImage = state.imageFile;
                                       context
                                           .read<CoverImageBloc>()
                                           .add(ImageUpdateEvent());
-                                      newImage = state.imageFile;
+                                     
                                     },
                                     child: Center(
                                       child: Container(
@@ -162,6 +163,7 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
                                     context
                                         .read<CoverImageBloc>()
                                         .add(ImageUpdateEvent());
+                                        
                                   },
                                   child: Center(
                                     child: Container(
@@ -435,6 +437,37 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
                         ],
                       ),
                     ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      "Amount",
+                      style: t1,
+                    ),
+                    TextFormField(
+                      controller: _amountController,
+                      validator: validatorForAmount,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      decoration: InputDecoration(
+                          prefixIcon: Icon(Icons.currency_rupee),
+                          hintText: "if the course is free , type 0",
+                          filled: true,
+                          fillColor: Colors.white,
+                          enabledBorder: OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Colors.grey, width: 2)),
+                          disabledBorder: OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Colors.grey, width: 2)),
+                          border: OutlineInputBorder(
+                              gapPadding: 12,
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide:
+                                  BorderSide(color: Colors.grey, width: 2))),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
                     Center(
                       child: Container(
                         width: screenWidth / 5,
@@ -539,7 +572,7 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
         // Add course data to Firestore
         courseID = FirebaseFirestore.instance.collection("courses").doc().id;
         Map<String, dynamic> data = {
-          "CourseId": courseID,
+          "courseID": courseID,
           "photo": coverImageUrl,
           "title": _titleController.text.trim(),
           "overview": _overViewController.text.trim(),
@@ -552,7 +585,8 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
           "videos": linkController
               .map((controller) => controller.text.trim())
               .toList(),
-          "additionalDocumentUrl": docUrl,
+          "document": docUrl,
+          "amount": _amountController.text.trim()
         };
 
         // Dispatch add course event
@@ -579,6 +613,17 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
   String? nonEmptyValidator(String? value) {
     if (value == null || value.isEmpty) {
       return 'This field is required.';
+    }
+    return null;
+  }
+
+  String? validatorForAmount(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter a valid amount.';
+    }
+    final RegExp regex = RegExp(r'^[0-9]+$');
+    if (!regex.hasMatch(value)) {
+      return 'Please enter numbers only.';
     }
     return null;
   }

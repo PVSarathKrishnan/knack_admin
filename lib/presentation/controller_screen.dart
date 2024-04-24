@@ -19,14 +19,13 @@ class ControllerScreen extends StatefulWidget {
 
 class _ControllerScreenState extends State<ControllerScreen> {
   final List<Widget> _screens = [
-    const HomeScreen(),
-    const AddCourseScreen(),
-    const UserDetailsScreen(),
-    const CourseManagementScreen(),
-    const RevenueManagementScreen(),
-    const SettingsScreen(),
-    const LogoutScreen(),
-    
+    HomeScreen(),
+    AddCourseScreen(),
+    CourseManagementScreen(),
+    UserDetailsScreen(),
+    RevenueManagementScreen(),
+    SettingsScreen(),
+    LogoutScreen(),
   ];
 
   int _selectedIndex = 0; // Track the selected index
@@ -88,11 +87,9 @@ class _ControllerScreenState extends State<ControllerScreen> {
             ),
             selectedIndex: _selectedIndex,
             items: [
-             
               SideNavigationBarItem(
                 icon: Icons.home_filled,
                 label: "Home",
-                
               ),
               SideNavigationBarItem(
                 icon: Icons.add_circle_outline_sharp,
@@ -103,6 +100,10 @@ class _ControllerScreenState extends State<ControllerScreen> {
                 label: "Course Management",
               ),
               SideNavigationBarItem(
+                icon: Icons.people,
+                label: "User Management",
+              ),
+              SideNavigationBarItem(
                 icon: Icons.auto_graph_sharp,
                 label: "Revenue Management",
               ),
@@ -110,10 +111,7 @@ class _ControllerScreenState extends State<ControllerScreen> {
                 icon: Icons.settings,
                 label: "Settings",
               ),
-              // SideNavigationBarItem(
-              //   icon: Icons.feedback,
-              //   label: "Feedback",
-              // ),
+              
               SideNavigationBarItem(
                 icon: Icons.logout,
                 label: "Logout",
