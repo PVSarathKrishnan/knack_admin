@@ -18,7 +18,7 @@ class CourseBloc extends Bloc<CourseEvent, CourseState> {
     AddCourseEvent event,
     Emitter<CourseState> emit,
   ) async {
-    emit(LoadingState()); // Emit LoadingState 
+    emit(LoadingState()); // Emit LoadingState
 
     try {
       print("Adding course data: ${event.data}"); // Log course data
@@ -56,6 +56,11 @@ class CourseBloc extends Bloc<CourseEvent, CourseState> {
       print(event.CourseId);
       await FirebaseFirestore.instance
           .collection("courses")
+          .doc(event.CourseId)
+          .delete();
+
+      await FirebaseFirestore.instance
+          .collection("bookings")
           .doc(event.CourseId)
           .delete();
     } on FirebaseException catch (e) {

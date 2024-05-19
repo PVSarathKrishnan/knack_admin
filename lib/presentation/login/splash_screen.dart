@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:knack_admin/main.dart';
 import 'package:knack_admin/presentation/controller_screen.dart';
@@ -41,7 +40,7 @@ class _SplashScreenState extends State<SplashScreen> {
       Navigator.of(context)
           .pushReplacement(MaterialPageRoute(builder: (ctx) => LoginScreen()));
     } else {
-      await Future.delayed(Duration(seconds: 3));
+      await Future.delayed(Duration(seconds: 1));
       Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (ctx) => ControllerScreen()));
     }

@@ -47,18 +47,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         theme: ThemeData(
             primaryColor: Colors.green,
-            colorScheme: ColorScheme(
-                brightness: Brightness.light,
-                primary: Colors.green,
-                onPrimary: Color.fromARGB(255, 0, 0, 0),
-                secondary: Colors.black,
-                onSecondary: Colors.black26,
-                error: Colors.red,
-                onError: const Color.fromARGB(255, 255, 17, 0),
-                background: const Color.fromARGB(255, 214, 214, 214),
-                onBackground: Colors.grey,
-                surface: Colors.green,
-                onSurface: Colors.black),
+            
             useMaterial3: false),
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',

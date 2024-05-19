@@ -1,12 +1,15 @@
 import 'dart:typed_data';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebasestorage;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker_web/image_picker_web.dart';
 import 'package:knack_admin/application/bloc/course%20bloc/bloc/course_bloc.dart';
 import 'package:knack_admin/application/bloc/cover%20image%20bloc/bloc/cover_image_bloc.dart';
 import 'package:knack_admin/application/bloc/fetch%20course%20bloc/bloc/fetch_course_bloc.dart';
 import 'package:knack_admin/presentation/Custom%20Widgets/loader.dart';
+import 'package:knack_admin/presentation/course/add_course_screen.dart';
 import 'package:knack_admin/presentation/style/text_style.dart';
 
 class CourseManagementScreen extends StatefulWidget {
@@ -88,7 +91,13 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
                                     icon: const Icon(Icons.delete_outline)),
                                 IconButton(
                                     onPressed: () {
-                                      showEditBox(context, state, i);
+                                      Navigator.of(context)
+                                          .push(MaterialPageRoute(
+                                        builder: (context) => AddCourseScreen(
+                                          isEditing: true,
+                                          courseModel: state.courseList[i],
+                                        ),
+                                      ));
                                     },
                                     icon: const Icon(Icons.edit)),
                               ],
@@ -114,101 +123,86 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
   }
 
   //edit box
-  Future<void> showEditBox(
-      BuildContext context, FetchCourseLoadedState state, int i) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    _titleController.text = state.courseList[i].title;
-    _overviewController.text = state.courseList[i].overview;
-    _amountController.text = state.courseList[i].amount;
-   
+  // Future<void> showEditBox(
+  //     BuildContext context, FetchCourseLoadedState state, int i) async {
+  //   double screenWidth = MediaQuery.of(context).size.width;
+  //   _titleController.text = state.courseList[i].title;
+  //   _overviewController.text = state.courseList[i].overview;
+  //   _amountController.text = state.courseList[i].amount;
 
-    return showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text("Edit Course"),
-          content: SingleChildScrollView(
-            child: Form(
-              key: _key,
-              child: Column(
-                children: [
-                  Container(
-                    width: screenWidth / 3,
-                    child: Padding(
-                      padding: EdgeInsets.all(8),
-                      child: Column(
-                        children: [
-                          Text("Title"),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          TextFormField(
-                            controller: _titleController,
-                            validator: validateNotEmpty,
-                            autovalidateMode:
-                                AutovalidateMode.onUserInteraction,
-                            decoration: const InputDecoration(
-                                hintText: "Title",
-                                border: OutlineInputBorder()),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Text("OverView"),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          TextFormField(
-                            controller: _overviewController,
-                            validator: validateNotEmpty,
-                            autovalidateMode:
-                                AutovalidateMode.onUserInteraction,
-                            decoration: const InputDecoration(
-                                hintText: "Title",
-                                border: OutlineInputBorder()),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Text("Amount"),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          TextFormField(
-                            controller: _amountController,
-                            validator: validateNotEmpty,
-                            autovalidateMode:
-                                AutovalidateMode.onUserInteraction,
-                            decoration: const InputDecoration(
-                                hintText: "Title",
-                                border: OutlineInputBorder()),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                         
-                         
-                          SizedBox(
-                            height: 20,
-                          ),
-                          ElevatedButton(
-                              onPressed: () {
-                                editCourse(
-                                    context, state.courseList[i].courseID);
-                              },
-                              child: const Text("Edit Package"))
-                        ],
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
+  //   // Fetch current image and document URLs
+  //   String? currentImageURL = state.courseList[i].photo;
+  //   String? currentDocumentURL = state.courseList[i].document;
+
+  //   // Assuming you have a function to convert lists to controllers
+
+  //   return showDialog(
+  //     context: context,
+  //     builder: (context) {
+  //       return AlertDialog(
+  //         title: Text("Edit Basic Details"),
+  //         content: SingleChildScrollView(
+  //           child: Form(
+  //             key: _key,
+  //             child: Column(
+  //               children: [
+  //                 // Title, Overview, and Amount fields
+  //                 //...
+
+  //                 // Image
+  //                 InkWell(
+  //                   onTap: () {
+  //                     // Trigger image picker
+  //                   },
+  //                   child: Container(
+  //                     height: 100,
+  //                     width: 100,
+  //                     decoration: BoxDecoration(
+  //                       border: Border.all(color: Colors.grey),
+  //                       borderRadius: BorderRadius.circular(12),
+  //                     ),
+  //                     child: currentImageURL != null
+  //                         ? Image.network(currentImageURL)
+  //                         : Center(child: Text("No Image")),
+  //                   ),
+  //                 ),
+
+  //                 // Document
+  //                 InkWell(
+  //                   onTap: () {
+  //                     // Trigger document picker
+  //                   },
+  //                   child: Container(
+  //                     height: 100,
+  //                     width: 100,
+  //                     decoration: BoxDecoration(
+  //                       border: Border.all(color: Colors.grey),
+  //                       borderRadius: BorderRadius.circular(12),
+  //                     ),
+  //                     child: currentDocumentURL != null
+  //                         ? Image.network(currentDocumentURL)
+  //                         : Center(child: Text("No Document")),
+  //                   ),
+  //                 ),
+
+  //                 // Chapters, Descriptions, and Video Links
+  //                 // Use ListView.builder for each list, as shown in the previous response
+
+  //                 // Submit Button
+  //                 ElevatedButton(
+  //                   onPressed: () {
+  //                     // Handle form submission
+  //                   },
+  //                   child: Text("Update Course"),
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
 //delete confirmation
   Future<void> deleteDialog(BuildContext context, String id) async {
@@ -260,7 +254,7 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
   }
 
   void editCourse(BuildContext context, String courseID) async {
-    if (_key.currentState!.validate() ) {
+    if (_key.currentState!.validate()) {
       firebasestorage.Reference ref = firebasestorage.FirebaseStorage.instance
           .ref("course_${_titleController.text.trim()}");
       firebasestorage.UploadTask uploadTask = ref.putData(newImage!);
@@ -269,13 +263,9 @@ class _CourseManagementScreenState extends State<CourseManagementScreen> {
         backgroundColor: Colors.blue,
         duration: Duration(seconds: 5),
       ));
-      await uploadTask;
-
-      var downloadUrl = await ref.getDownloadURL();
 
       Map<String, String> data = {
         "SubsId": courseID,
-        "photo": downloadUrl,
         "title": _titleController.text.trim(),
         "overview": _overviewController.text.trim(),
         "amount": _amountController.text.trim()

@@ -1,24 +1,62 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebasestorage;
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker_web/image_picker_web.dart';
+import 'package:knack_admin/Domain/model/course_model.dart';
 import 'package:knack_admin/application/bloc/course%20bloc/bloc/course_bloc.dart';
 import 'package:knack_admin/application/bloc/cover%20image%20bloc/bloc/cover_image_bloc.dart';
+import 'package:knack_admin/presentation/Custom%20Widgets/loader.dart';
+import 'package:knack_admin/presentation/course/course_management.dart';
 import 'package:knack_admin/presentation/style/text_style.dart';
 
 class AddCourseScreen extends StatefulWidget {
-  const AddCourseScreen({super.key});
+  final bool isEditing;
+  final CourseModel? courseModel;
+  const AddCourseScreen({
+    super.key,
+    this.isEditing = false,
+    this.courseModel,
+  });
 
   @override
   State<AddCourseScreen> createState() => _AddCourseScreenState();
 }
 
 class _AddCourseScreenState extends State<AddCourseScreen> {
+  @override
+  void initState() {
+    super.initState();
+    if (widget.isEditing && widget.courseModel != null) {
+      _titleController.text = widget.courseModel!.title;
+      _overViewController.text = widget.courseModel!.overview;
+      _amountController.text = widget.courseModel!.amount;
+
+      // Initialize cover photo
+      _getCoverPhotoFromUrl(widget.courseModel!.photo);
+
+      // Initialize document
+      _getDocumentFromUrl(widget.courseModel!.document);
+
+      // Initialize chapters, descriptions, and links
+      chapterController = widget.courseModel!.chapters
+          .map((chapter) => TextEditingController(text: chapter))
+          .toList();
+      descriptionController = widget.courseModel!.description
+          .map((description) => TextEditingController(text: description))
+          .toList();
+      linkController = widget.courseModel!.videos
+          .map((link) => TextEditingController(text: link))
+          .toList();
+    }
+  }
+
   final _key = GlobalKey<FormState>();
   FilePickerResult? _pickedFile;
+  bool _isUploading = false;
 
   TextEditingController _titleController = TextEditingController();
   TextEditingController _overViewController = TextEditingController();
@@ -130,53 +168,45 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
                             ),
                             BlocBuilder<CoverImageBloc, CoverImageState>(
                               builder: (context, state) {
-                                if (state is ImageUpdateState) {
-                                  return GestureDetector(
-                                    onTap: () {
-                                       newImage = state.imageFile;
-                                      context
-                                          .read<CoverImageBloc>()
-                                          .add(ImageUpdateEvent());
-                                     
-                                    },
-                                    child: Center(
-                                      child: Container(
-                                        height: 200,
-                                        width: screenWidth / 4,
-                                        decoration: BoxDecoration(
-                                          color: Colors.green,
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                          border: Border.all(
-                                              color: Colors.white, width: 2),
-                                        ),
-                                        child: Image.memory(
-                                          state.imageFile,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
+                                return InkWell(
+                                  onTap: _pickImage,
+                                  // onTap: () {
+                                  //   context
+                                  //       .read<CoverImageBloc>()
+                                  //       .add(ImageUpdateEvent());
+                                  // },
+                                  child: Container(
+                                    height: screenWidth / 8,
+                                    width: screenWidth / 4,
+                                    decoration: BoxDecoration(
+                                      color: Colors.green,
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                          color: Colors.white, width: 2),
                                     ),
-                                  );
-                                }
-                                return GestureDetector(
-                                  onTap: () {
-                                    context
-                                        .read<CoverImageBloc>()
-                                        .add(ImageUpdateEvent());
-                                        
-                                  },
-                                  child: Center(
-                                    child: Container(
-                                        height: 200,
-                                        width: screenWidth / 4,
-                                        decoration: BoxDecoration(
-                                          color: Colors.green,
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                          border: Border.all(
-                                              color: Colors.white, width: 2),
-                                        ),
-                                        child: Icon(Icons.image)),
+                                    child: newImage != null
+                                        ? Image.memory(
+                                            newImage!,
+                                            height: 100,
+                                            width: 100,
+                                            fit: BoxFit.cover,
+                                          )
+                                        : Center(
+                                            child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Icon(
+                                                Icons.image,
+                                                size: 70,
+                                              ),
+                                              Text(
+                                                "Select image from your device",
+                                                style:
+                                                    t1.copyWith(fontSize: 15),
+                                              ),
+                                            ],
+                                          )),
                                   ),
                                 );
                               },
@@ -193,7 +223,7 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
                               height: 10,
                             ),
                             Container(
-                              height: 200,
+                              height: screenWidth / 8,
                               width: screenWidth / 4,
                               decoration: BoxDecoration(
                                 color: Colors.green,
@@ -408,16 +438,14 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
                           chapterController.add(TextEditingController());
                           descriptionController.add(TextEditingController());
                           linkController.add(TextEditingController());
-                          print(linkController);
                         });
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Container(
-                            width: screenWidth / 6,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 15),
+                            width: screenWidth / 5,
+                            height: screenWidth / 30,
                             decoration: BoxDecoration(
                                 color: Colors.grey,
                                 borderRadius: BorderRadius.circular(22)),
@@ -490,16 +518,32 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
                                 ),
                               );
                             } else {
-                              return ElevatedButton.icon(
-                                style: ButtonStyle(
-                                    elevation: MaterialStatePropertyAll(22)),
-                                onPressed: () => uploadCourse(context),
-                                icon: Icon(Icons.save),
-                                label: Text(
-                                  "Save and submit data",
-                                  style: t1,
-                                ),
-                              );
+                              return widget.isEditing
+                                  ? ElevatedButton.icon(
+                                      style: ButtonStyle(
+                                          elevation:
+                                              MaterialStatePropertyAll(22)),
+                                      onPressed: () =>
+                                          editCourse(context, courseID!),
+                                      icon: Icon(Icons.save),
+                                      label: !_isUploading
+                                          ? Text(
+                                              "Edit Course",
+                                              style: t1,
+                                            )
+                                          : CustomLoaderWidget())
+                                  : ElevatedButton.icon(
+                                      style: ButtonStyle(
+                                          elevation:
+                                              MaterialStatePropertyAll(22)),
+                                      onPressed: () => uploadCourse(context),
+                                      icon: Icon(Icons.save),
+                                      label: !_isUploading
+                                          ? Text(
+                                              "Save and submit data",
+                                              style: t1,
+                                            )
+                                          : CustomLoaderWidget());
                             }
                           },
                         ),
@@ -529,6 +573,9 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
   }
 
   void uploadCourse(BuildContext context) async {
+    setState(() {
+      _isUploading = true;
+    });
     if (newImage == null || _pickedFile == null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Row(
@@ -541,7 +588,9 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
               width: 5,
             ),
             Text(
-              "Both cover image and document are required.",
+              newImage == null
+                  ? "cover image is required."
+                  : "document is required.",
               style: t1.copyWith(color: Colors.black),
             ),
           ],
@@ -549,8 +598,14 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
         duration: Duration(seconds: 2),
         backgroundColor: Colors.red,
       ));
+      setState(() {
+        _isUploading = false;
+      });
     } else {
       try {
+        setState(() {
+          _isUploading = true;
+        });
         // Upload cover image
         firebasestorage.Reference imageRef = firebasestorage
             .FirebaseStorage.instance
@@ -594,11 +649,32 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
             .read<CourseBloc>()
             .add(AddCourseEvent(data: data, CourseId: courseID!));
 
+        _titleController.clear();
+        _overViewController.clear();
+        _amountController.clear();
+        _chapterNameController.clear();
+        _descriptionNameController.clear();
+        chapterController.forEach((controller) => controller.clear());
+        descriptionController.forEach((controller) => controller.clear());
+        linkController.forEach((controller) => controller.clear());
+
+        // Clear image and document variables
+        setState(() {
+          _pickedFile = null;
+          newImage = null;
+          _isUploading = false;
+        });
+
         // Show success message
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text("Course added successfully !"),
           backgroundColor: Colors.green,
         ));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CourseManagementScreen(),
+            ));
       } catch (e) {
         print("Error uploading course: $e");
         // Show error message
@@ -608,6 +684,21 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
         ));
       }
     }
+  }
+
+  void _pickImage() async {
+    // Call ImagePickerWeb to pick an image
+    ImagePickerWeb.getImageInfo.then((MediaInfo? mediaInfo) {
+      if (mediaInfo != null) {
+        setState(() {
+          newImage = mediaInfo.data;
+        });
+      } else {
+        print('Image picking canceled or failed.');
+      }
+    }).catchError((error) {
+      print('Error picking image: $error');
+    });
   }
 
   String? nonEmptyValidator(String? value) {
@@ -626,5 +717,121 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
       return 'Please enter numbers only.';
     }
     return null;
+  }
+
+  Future<void> _getCoverPhotoFromUrl(String url) async {
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        setState(() {
+          newImage = response.bodyBytes;
+        });
+      } else {
+        print('Failed to fetch cover photo: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching cover photo from URL: $e');
+    }
+  }
+
+  Future<void> _getDocumentFromUrl(String url) async {
+    try {
+      final ref = firebasestorage.FirebaseStorage.instance.refFromURL(url);
+      final bytes = await ref.getData();
+      final downloadedFile = PlatformFile(
+        name: url.split('/').last,
+        bytes: bytes,
+        size: 0,
+      );
+      setState(() {
+        _pickedFile = FilePickerResult([downloadedFile]);
+      });
+    } catch (e) {
+      print('Error fetching document from URL: $e');
+    }
+  }
+
+  void editCourse(BuildContext context, String courseId) async {
+    // Validate form fields
+    if (_key.currentState!.validate()) {
+      try {
+        // Check if there's a new cover image selected
+        String? coverImageUrl;
+        if (newImage != null) {
+          print("Uploading new cover image...");
+          // Upload the new cover image
+          firebasestorage.Reference imageRef = firebasestorage
+              .FirebaseStorage.instance
+              .ref("course_${_titleController.text.trim()}");
+          firebasestorage.UploadTask uploadImageTask =
+              imageRef.putData(newImage!);
+          coverImageUrl = await (await uploadImageTask).ref.getDownloadURL();
+          print("New cover image uploaded: $coverImageUrl");
+        }
+
+        // Check if there's a new document selected
+        String? documentUrl;
+        if (_pickedFile != null) {
+          print("Uploading new document...");
+          // Upload the new document
+          FilePickerResult result = _pickedFile!;
+          firebasestorage.Reference docRef = firebasestorage
+              .FirebaseStorage.instance
+              .ref("course_docs/${result.files.first.name}");
+          firebasestorage.UploadTask uploadDocTask =
+              docRef.putData(result.files.first.bytes!);
+          documentUrl = await (await uploadDocTask).ref.getDownloadURL();
+          print("New document uploaded: $documentUrl");
+        }
+
+        // Prepare updated course data
+        Map<String, dynamic> data = {
+          "title": _titleController.text.trim(),
+          "overview": _overViewController.text.trim(),
+          "amount": _amountController.text.trim(),
+          // Update cover image URL if changed
+          if (coverImageUrl != null) "photo": coverImageUrl,
+          // Update document URL if changed
+          if (documentUrl != null) "document": documentUrl,
+        };
+
+        print("Updated course data: $data");
+
+        // Dispatch edit course event
+        context.read<CourseBloc>().add(EditCourseEvent(
+              data: data,
+              CourseId: courseId,
+            ));
+
+        // Show success message
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("Course updated successfully!"),
+          backgroundColor: Colors.green,
+        ));
+
+        // Clear form fields
+        _titleController.clear();
+        _overViewController.clear();
+        _amountController.clear();
+        // Clear selected image and document
+        setState(() {
+          _pickedFile = null;
+          newImage = null;
+        });
+      } catch (e) {
+        print("Error updating course: $e");
+        // Show error message
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("Error updating course. Please try again later."),
+          backgroundColor: Colors.red,
+        ));
+      }
+    } else {
+      // Form validation failed
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Please fill all the required fields."),
+        backgroundColor: Colors.red,
+      ));
+    }
   }
 }

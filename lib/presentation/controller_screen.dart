@@ -46,7 +46,7 @@ class _ControllerScreenState extends State<ControllerScreen> {
                   unselectedItemColor: Colors.white),
               togglerTheme: SideNavigationBarTogglerTheme(
                 expandIconColor: const Color.fromARGB(255, 0, 0, 0),
-                shrinkIconColor: Colors.black,
+                shrinkIconColor: Colors.green,
               ),
               dividerTheme: SideNavigationBarDividerTheme(
                 footerDividerColor: Colors.white,
@@ -111,7 +111,6 @@ class _ControllerScreenState extends State<ControllerScreen> {
                 icon: Icons.settings,
                 label: "Settings",
               ),
-              
               SideNavigationBarItem(
                 icon: Icons.logout,
                 label: "Logout",

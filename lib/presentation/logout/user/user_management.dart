@@ -40,7 +40,6 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
             builder: (context, state) {
               if (state is FetchUserLoadedState) {
                 return DataTable(
-                  
                   headingRowHeight: 50,
                   columns: [
                     DataColumn(label: Text('sl/no', style: t1)),
@@ -50,9 +49,13 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                   rows: List<DataRow>.generate(
                     state.userList.length,
                     (index) => DataRow(cells: [
-                      DataCell(Text((index + 1).toString(), style: t1.copyWith(fontWeight: FontWeight.normal))),
-                      DataCell(Text(state.userList[index].name, style: t1.copyWith(fontWeight: FontWeight.normal))),
-                      DataCell(Text(state.userList[index].email, style: t1.copyWith(fontWeight: FontWeight.normal))),
+                      DataCell(Text((index + 1).toString(),
+                          style: t1.copyWith(fontWeight: FontWeight.normal))),
+                      DataCell(Text(state.userList[index].name,
+                          style: t1.copyWith(fontWeight: FontWeight.normal))),
+                      DataCell(Text(state.userList[index].email,
+                          style: t1.copyWith(fontWeight: FontWeight.normal))),
+
                       // Add more DataCell widgets if needed
                     ]),
                   ),

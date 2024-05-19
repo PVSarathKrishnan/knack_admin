@@ -12,8 +12,10 @@ class HomeScreen extends StatelessWidget {
       body: Center(
         child: Column(
           children: [
-        
-            Text("Home Page",style: t1,)
+            Text(
+              "Home Page",
+              style: t1,
+            )
           ],
         ),
       ),
@@ -28,7 +30,7 @@ class HomeScreen extends StatelessWidget {
   //     margin: EdgeInsets.symmetric(horizontal: 400),
   //     padding: EdgeInsets.all(20),
   //     decoration: BoxDecoration(
-  //       color: Colors.green,
+  //       color: Colors.black,
   //       borderRadius: BorderRadius.circular(20),
   //     ),
   //     child: Row(

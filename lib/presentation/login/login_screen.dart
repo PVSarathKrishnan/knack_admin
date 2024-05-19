@@ -54,14 +54,13 @@ class _LoginScreenState extends State<LoginScreen> {
               InkWell(
                 onTap: _login,
                 child: Container(
-                  
                   width: screenWidth / 6,
                   height: screenHeight / 15,
                   decoration: BoxDecoration(
                       color: Colors.green,
                       borderRadius: BorderRadius.circular(12)),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal:  10.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -112,7 +111,7 @@ class _LoginScreenState extends State<LoginScreen> {
       content: Text(
         content,
       ),
-      backgroundColor: Color.fromARGB(255, 0, 255, 106),
+      backgroundColor: Colors.green,
       behavior: SnackBarBehavior.floating,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),
@@ -143,7 +142,9 @@ class _LoginScreenState extends State<LoginScreen> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12),borderSide: BorderSide(color: Colors.white))),
+          border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.white))),
     );
   }
 }
