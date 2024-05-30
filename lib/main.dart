@@ -13,6 +13,7 @@ import 'package:knack_admin/presentation/course/add_course_screen.dart';
 import 'package:knack_admin/presentation/login/splash_screen.dart';
 
 const SAVE_KEY_NAME = "UserLoggedIn";
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -46,9 +47,35 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         theme: ThemeData(
-            primaryColor: Colors.green,
-            
-            useMaterial3: false),
+          primaryColor: Colors.green,
+          colorScheme: ColorScheme(
+            primary: Colors.green,
+            onPrimary: Colors.black,
+            secondary: const Color.fromARGB(255, 255, 255, 255),
+            onSecondary: const Color.fromARGB(255, 0, 0, 0),
+            surface: const Color.fromARGB(255, 255, 255, 255),
+            onSurface: const Color.fromARGB(255, 0, 0, 0),
+            background: const Color.fromARGB(255, 0, 0, 0),
+            onBackground: Colors.black,
+            error: Colors.red,
+            onError: Colors.white,
+            brightness: Brightness.light,
+          ),
+          scaffoldBackgroundColor: Colors.white,
+          appBarTheme: AppBarTheme(
+            backgroundColor: Colors.black,
+            iconTheme: IconThemeData(color: Colors.white),
+            titleTextStyle: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+          buttonTheme: ButtonThemeData(
+            buttonColor: Colors.green,
+            textTheme: ButtonTextTheme.primary,
+          ),
+          floatingActionButtonTheme: FloatingActionButtonThemeData(
+            backgroundColor: Colors.green,
+          ),
+          iconTheme: IconThemeData(color: Colors.green),
+        ),
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
         home: SplashScreen(),

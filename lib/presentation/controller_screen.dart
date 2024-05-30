@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:knack_admin/presentation/course/course_management.dart';
-import 'package:knack_admin/presentation/logout/user/user_management.dart';
-import 'package:knack_admin/presentation/revenue/revenue_management.dart';
-import 'package:knack_admin/presentation/settings/settings.dart';
-import 'package:side_navigation/side_navigation.dart';
+import 'package:sidebarx/sidebarx.dart';
 
 // Import your screen classes (replace with actual implementations)
-import 'home/home_screen.dart'; // Assuming you have a home_screen.dart file
-import 'course/add_course_screen.dart'; // Assuming you have an add_course_screen.dart file
-import 'logout/logout_screen.dart'; // Assuming you have a logout_screen.dart file
+import 'home/home_screen.dart';
+import 'course/add_course_screen.dart';
+import 'course/course_management.dart';
+import 'user/user_management.dart';
+import 'revenue/revenue_management.dart';
+import 'settings/settings.dart';
+import 'logout/logout_screen.dart';
 
 class ControllerScreen extends StatefulWidget {
   const ControllerScreen({Key? key}) : super(key: key);
@@ -24,108 +24,148 @@ class _ControllerScreenState extends State<ControllerScreen> {
     CourseManagementScreen(),
     UserDetailsScreen(),
     RevenueManagementScreen(),
-    SettingsScreen(),
-    LogoutScreen(),
   ];
 
-  int _selectedIndex = 0; // Track the selected index
+  final SidebarXController _controller =
+      SidebarXController(selectedIndex: 0, extended: false);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.green,
+      backgroundColor: Colors.white,
       body: Row(
         children: [
-          SideNavigationBar(
-            expandable: true,
-            initiallyExpanded: false,
-            theme: SideNavigationBarTheme(
-              itemTheme: SideNavigationBarItemTheme(
-                  selectedItemColor: Colors.green,
-                  selectedBackgroundColor: Colors.black,
-                  unselectedItemColor: Colors.white),
-              togglerTheme: SideNavigationBarTogglerTheme(
-                expandIconColor: const Color.fromARGB(255, 0, 0, 0),
-                shrinkIconColor: Colors.green,
+          SidebarX(
+            separatorBuilder: (context, index) {
+              // Return your custom separator widget here
+              return Divider(
+                height: 50,
+                thickness: 2,
+                color: const Color.fromARGB(255, 255, 255, 255).withOpacity(0.2),
+                indent: 30,
+                endIndent: 30,
+              );
+            },
+            showToggleButton: false,
+            controller: _controller,
+            theme: SidebarXTheme(
+              width: 150, // Set a fixed width for the sidebar
+              margin: const EdgeInsets.all(15),
+              decoration: BoxDecoration(
+                color: canvasColor,
+                borderRadius: BorderRadius.circular(20),
               ),
-              dividerTheme: SideNavigationBarDividerTheme(
-                footerDividerColor: Colors.white,
-                headerDividerColor: Colors.white,
-                mainDividerColor: Colors.white,
-                footerDividerThickness: 2,
-                headerDividerThickness: 1,
-                mainDividerThickness: 2,
-                showHeaderDivider: true,
-                showMainDivider: true,
-                showFooterDivider: false,
+              hoverColor: scaffoldBackgroundColor,
+              textStyle: TextStyle(color: Colors.white.withOpacity(0.7)),
+              selectedTextStyle: const TextStyle(color: Colors.white),
+              hoverTextStyle: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w500,
               ),
-            ),
-            header: SideNavigationBarHeader(
-                image: Image.asset(
-                  "lib/assets/logo_name.png",
-                  height: 100,
-                  width: 150,
+              itemTextPadding: const EdgeInsets.only(left: 30),
+              selectedItemTextPadding: const EdgeInsets.only(left: 30),
+              itemDecoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: canvasColor),
+              ),
+              selectedItemDecoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: actionColor.withOpacity(0.37),
                 ),
-                title: Text(" "),
-                subtitle: Text(" ")),
-            footer: SideNavigationBarFooter(
-              label: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    "lib/assets/logo_tr.png",
-                    height: 50,
-                  ),
-                  Text(
-                    "Lightning your future",
-                    style: TextStyle(
-                      color: const Color.fromARGB(255, 0, 0, 0),
-                    ),
-                  ),
+                gradient: const LinearGradient(
+                  colors: [accentCanvasColor, canvasColor],
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.28),
+                    blurRadius: 30,
+                  )
                 ],
               ),
+              iconTheme: IconThemeData(
+                color: Colors.white.withOpacity(0.3),
+                size: 20,
+              ),
+              selectedIconTheme: const IconThemeData(
+                color: Colors.white,
+                size: 35,
+              ),
             ),
-            selectedIndex: _selectedIndex,
-            items: [
-              SideNavigationBarItem(
+            headerBuilder: (context, extended) {
+              return SizedBox(
+                height: 100,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Image.asset('lib/assets/logo_name.png'),
+                ),
+              );
+            },
+            footerDivider: divider,
+            items: const [
+              SidebarXItem(
                 icon: Icons.home_filled,
-                label: "Home",
+                label: 'Home',
               ),
-              SideNavigationBarItem(
+              SidebarXItem(
                 icon: Icons.add_circle_outline_sharp,
-                label: "Add Course",
+                label: 'Add Course',
               ),
-              SideNavigationBarItem(
+              SidebarXItem(
                 icon: Icons.menu_book_sharp,
-                label: "Course Management",
+                label: 'Course Management',
               ),
-              SideNavigationBarItem(
+              SidebarXItem(
                 icon: Icons.people,
-                label: "User Management",
+                label: 'User Management',
               ),
-              SideNavigationBarItem(
+              SidebarXItem(
                 icon: Icons.auto_graph_sharp,
-                label: "Revenue Management",
-              ),
-              SideNavigationBarItem(
-                icon: Icons.settings,
-                label: "Settings",
-              ),
-              SideNavigationBarItem(
-                icon: Icons.logout,
-                label: "Logout",
+                label: 'Revenue Management',
               ),
             ],
-            onTap: (index) {
-              setState(() {
-                _selectedIndex = index;
-              });
-            },
           ),
+          // Add spacing between the SideNavigationBar and the main content
+          const SizedBox(width: 10),
           // Display the selected screen based on _selectedIndex
-          Expanded(child: _screens[_selectedIndex]),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: AnimatedBuilder(
+                animation: _controller,
+                builder: (context, child) {
+                  return _screens[_controller.selectedIndex];
+                },
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 }
+
+String _getTitleByIndex(int index) {
+  switch (index) {
+    case 0:
+      return 'Home';
+    case 1:
+      return 'Add Course';
+    case 2:
+      return 'Course Management';
+    case 3:
+      return 'User Management';
+    case 4:
+      return 'Revenue Management';
+    default:
+      return 'Not found page';
+  }
+}
+
+const primaryColor = Colors.green;
+const canvasColor = Colors.black;
+const scaffoldBackgroundColor = Colors.black;
+const accentCanvasColor = Colors.green;
+const white = Colors.white;
+final actionColor = Colors.green.withOpacity(0.6);
+final divider = Divider(color: white.withOpacity(0.3), height: 1);

@@ -74,7 +74,6 @@ class _RevenueManagementScreenState extends State<RevenueManagementScreen> {
     double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      backgroundColor: Colors.black,
       body: FutureBuilder<Map<String, dynamic>>(
         future: revenueData,
         builder: (context, snapshot) {
@@ -108,8 +107,8 @@ class _RevenueManagementScreenState extends State<RevenueManagementScreen> {
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
                     crossAxisCount: 4,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
+                    crossAxisSpacing: 8,
+                    mainAxisSpacing: 8,
                     children: [
                       _buildStatisticCard(
                         'Total Generated Amount',
@@ -178,7 +177,7 @@ class _RevenueManagementScreenState extends State<RevenueManagementScreen> {
                   fit: BoxFit.contain,
                 ),
               ),
-              SizedBox(height: 16),
+              SizedBox(height: 10),
               Text(
                 title,
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -203,7 +202,7 @@ class _RevenueManagementScreenState extends State<RevenueManagementScreen> {
       Colors.red,
       Colors.orange,
       Colors.yellow,
-      Colors.green,
+      Color(0xFF2E2E48),
       Colors.blue,
       Colors.indigo,
       Colors.purple,

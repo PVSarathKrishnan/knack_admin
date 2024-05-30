@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:knack_admin/main.dart';
@@ -14,6 +15,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   TextEditingController userNameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+
   @override
   void dispose() {
     userNameController.dispose();
@@ -57,7 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   width: screenWidth / 6,
                   height: screenHeight / 15,
                   decoration: BoxDecoration(
-                      color: Colors.green,
+                      color: Color.fromARGB(255, 0, 255, 106),
                       borderRadius: BorderRadius.circular(12)),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10.0),
@@ -84,25 +86,41 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _login() async {
-    if (userNameController.text == "admin@knack" &&
-        passwordController.text == "admin@123") {
-      // shared pref
-      final _sharedPrefs = await SharedPreferences.getInstance();
-      await _sharedPrefs.setBool(SAVE_KEY_NAME, true);
-      //snackbar
-      CustomSnackbar("Perfect, Welcome ", context);
-      Future.delayed(
-        Duration(seconds: 1),
-        () {
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ControllerScreen(),
-              ));
-        },
-      );
-    } else {
-      CustomSnackbar("Oops, Credentials don't match, try again", context);
+    final String username = userNameController.text;
+    final String password = passwordController.text;
+
+    try {
+      final adminDoc = await FirebaseFirestore.instance
+          .collection('admin')
+          .doc('hpcWsTKQ7zXaOBBC8GYs')
+          .get();
+
+      if (adminDoc.exists) {
+        final data = adminDoc.data();
+        if (data != null &&
+            data['username'] == username &&
+            data['password'] == password) {
+          final _sharedPrefs = await SharedPreferences.getInstance();
+          await _sharedPrefs.setBool(SAVE_KEY_NAME, true);
+          CustomSnackbar("Perfect, Welcome ", context);
+          Future.delayed(
+            Duration(seconds: 1),
+            () {
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ControllerScreen(),
+                  ));
+            },
+          );
+        } else {
+          CustomSnackbar("Oops, Credentials don't match, try again", context);
+        }
+      } else {
+        CustomSnackbar("Oops, Credentials don't match, try again", context);
+      }
+    } catch (e) {
+      CustomSnackbar("Error: ${e.toString()}", context);
     }
   }
 

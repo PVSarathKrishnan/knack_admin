@@ -30,27 +30,41 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
   @override
   void initState() {
     super.initState();
+    for (var i = 0; i < chapterController.length; i++) {
+      chaptersProgress.add(TextFieldProgress(controller: chapterController[i]));
+      descriptionsProgress
+          .add(TextFieldProgress(controller: descriptionController[i]));
+      linksProgress.add(TextFieldProgress(controller: linkController[i]));
+    }
+
     if (widget.isEditing && widget.courseModel != null) {
-      _titleController.text = widget.courseModel!.title;
-      _overViewController.text = widget.courseModel!.overview;
-      _amountController.text = widget.courseModel!.amount;
+      _titleController.text = widget.courseModel?.title ?? '';
+      _overViewController.text = widget.courseModel?.overview ?? '';
+      _amountController.text = widget.courseModel?.amount ?? '';
 
       // Initialize cover photo
-      _getCoverPhotoFromUrl(widget.courseModel!.photo);
+      if (widget.courseModel?.photo != null) {
+        _getCoverPhotoFromUrl(widget.courseModel!.photo);
+      }
 
       // Initialize document
-      _getDocumentFromUrl(widget.courseModel!.document);
+      if (widget.courseModel?.document != null) {
+        _getDocumentFromUrl(widget.courseModel!.document);
+      }
 
       // Initialize chapters, descriptions, and links
-      chapterController = widget.courseModel!.chapters
-          .map((chapter) => TextEditingController(text: chapter))
-          .toList();
-      descriptionController = widget.courseModel!.description
-          .map((description) => TextEditingController(text: description))
-          .toList();
-      linkController = widget.courseModel!.videos
-          .map((link) => TextEditingController(text: link))
-          .toList();
+      chapterController = widget.courseModel?.chapters
+              .map((chapter) => TextEditingController(text: chapter))
+              .toList() ??
+          [];
+      descriptionController = widget.courseModel?.description
+              .map((description) => TextEditingController(text: description))
+              .toList() ??
+          [];
+      linkController = widget.courseModel?.videos
+              .map((link) => TextEditingController(text: link))
+              .toList() ??
+          [];
     }
   }
 
@@ -71,12 +85,17 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
   String? coverImage;
   Uint8List? newImage;
 
+  final List<TextFieldProgress> chaptersProgress = [];
+  final List<TextFieldProgress> descriptionsProgress = [];
+  final List<TextFieldProgress> linksProgress = [];
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
     String fileName = _pickedFile?.files.first.name ?? '';
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 240, 240, 240),
+      backgroundColor: Color.fromARGB(255, 255, 255, 255),
       body: SingleChildScrollView(
         child: Center(
             child: Padding(
@@ -85,7 +104,7 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
             children: [
               Text(
                 "Add a new Course",
-                style: t1.copyWith(fontSize: 28, color: Colors.green),
+                style: t1.copyWith(fontSize: 28, color: Color(0xFF2E2E48)),
               ),
               Form(
                 key: _key,
@@ -170,19 +189,16 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
                               builder: (context, state) {
                                 return InkWell(
                                   onTap: _pickImage,
-                                  // onTap: () {
-                                  //   context
-                                  //       .read<CoverImageBloc>()
-                                  //       .add(ImageUpdateEvent());
-                                  // },
                                   child: Container(
                                     height: screenWidth / 8,
                                     width: screenWidth / 4,
                                     decoration: BoxDecoration(
-                                      color: Colors.green,
+                                      color: Color.fromARGB(255, 255, 255, 255),
                                       borderRadius: BorderRadius.circular(12),
                                       border: Border.all(
-                                          color: Colors.white, width: 2),
+                                          color: const Color.fromARGB(
+                                              255, 0, 0, 0),
+                                          width: 2),
                                     ),
                                     child: newImage != null
                                         ? Image.memory(
@@ -191,45 +207,48 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
                                             width: 100,
                                             fit: BoxFit.cover,
                                           )
-                                        : Center(
-                                            child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Icon(
-                                                Icons.image,
-                                                size: 70,
+                                        : widget.isEditing &&
+                                                widget.courseModel?.photo !=
+                                                    null
+                                            ? Image.network(
+                                                widget.courseModel!.photo,
+                                                height: 100,
+                                                width: 100,
+                                                fit: BoxFit.cover,
+                                              )
+                                            : Center(
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Icon(
+                                                      Icons.image,
+                                                      size: 70,
+                                                    ),
+                                                    Text(
+                                                      "Select image from your device",
+                                                      style: t1.copyWith(
+                                                          fontSize: 15),
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
-                                              Text(
-                                                "Select image from your device",
-                                                style:
-                                                    t1.copyWith(fontSize: 15),
-                                              ),
-                                            ],
-                                          )),
                                   ),
                                 );
                               },
                             ),
-                          ],
-                        ),
-                        Column(
-                          children: [
-                            Text(
-                              "Select document",
-                              style: t1,
-                            ),
                             SizedBox(
-                              height: 10,
+                              height: screenHeight / 20,
                             ),
                             Container(
                               height: screenWidth / 8,
                               width: screenWidth / 4,
                               decoration: BoxDecoration(
-                                color: Colors.green,
+                                color: const Color.fromARGB(255, 255, 255, 255),
                                 borderRadius: BorderRadius.circular(12),
-                                border:
-                                    Border.all(color: Colors.white, width: 2),
+                                border: Border.all(
+                                    color: const Color.fromARGB(255, 0, 0, 0),
+                                    width: 2),
                               ),
                               child: InkWell(
                                 onTap: _pickFile,
@@ -253,27 +272,50 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
                                           ),
                                         ],
                                       ))
-                                    : Center(
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Icon(
-                                              Icons.cloud_upload,
-                                              size: 70,
+                                    : widget.isEditing &&
+                                            widget.courseModel?.document != null
+                                        ? Center(
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Icon(
+                                                  Icons.cloud_download,
+                                                  size: 70,
+                                                ),
+                                                Text(
+                                                  "Document selected",
+                                                  style: t1,
+                                                ),
+                                                Text(
+                                                  widget.courseModel!.document!,
+                                                  style:
+                                                      t1.copyWith(fontSize: 15),
+                                                ),
+                                              ],
                                             ),
-                                            Text(
-                                              "Click here to select document",
-                                              style: t1,
+                                          )
+                                        : Center(
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Icon(
+                                                  Icons.cloud_upload,
+                                                  size: 70,
+                                                ),
+                                                Text(
+                                                  "Click here to select document",
+                                                  style: t1,
+                                                ),
+                                                SizedBox(
+                                                  height: 50,
+                                                ),
+                                                Text(
+                                                    "Select only PDF and DOCX files for upload.")
+                                              ],
                                             ),
-                                            SizedBox(
-                                              height: 50,
-                                            ),
-                                            Text(
-                                                "Select only PDF and DOCX files for upload.")
-                                          ],
-                                        ),
-                                      ),
+                                          ),
                               ),
                             ),
                           ],
@@ -529,11 +571,15 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
                                       label: !_isUploading
                                           ? Text(
                                               "Edit Course",
-                                              style: t1,
+                                              style: t1.copyWith(
+                                                  color: Colors.black),
                                             )
                                           : CustomLoaderWidget())
                                   : ElevatedButton.icon(
                                       style: ButtonStyle(
+                                          backgroundColor:
+                                              MaterialStatePropertyAll(
+                                                  Colors.green),
                                           elevation:
                                               MaterialStatePropertyAll(22)),
                                       onPressed: () => uploadCourse(context),
@@ -541,7 +587,8 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
                                       label: !_isUploading
                                           ? Text(
                                               "Save and submit data",
-                                              style: t1,
+                                              style: t1.copyWith(
+                                                  color: Colors.black),
                                             )
                                           : CustomLoaderWidget());
                             }
@@ -668,7 +715,7 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
         // Show success message
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text("Course added successfully !"),
-          backgroundColor: Colors.green,
+          backgroundColor: Color(0xFF2E2E48),
         ));
         Navigator.push(
             context,
@@ -719,119 +766,135 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
     return null;
   }
 
-  Future<void> _getCoverPhotoFromUrl(String url) async {
-    try {
-      final response = await http.get(Uri.parse(url));
+  void _getCoverPhotoFromUrl(String? url) async {
+    if (url != null && url.isNotEmpty) {
+      final http.Response response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
         setState(() {
           newImage = response.bodyBytes;
         });
-      } else {
-        print('Failed to fetch cover photo: ${response.statusCode}');
       }
-    } catch (e) {
-      print('Error fetching cover photo from URL: $e');
     }
   }
 
-  Future<void> _getDocumentFromUrl(String url) async {
-    try {
-      final ref = firebasestorage.FirebaseStorage.instance.refFromURL(url);
-      final bytes = await ref.getData();
-      final downloadedFile = PlatformFile(
-        name: url.split('/').last,
-        bytes: bytes,
-        size: 0,
-      );
-      setState(() {
-        _pickedFile = FilePickerResult([downloadedFile]);
-      });
-    } catch (e) {
-      print('Error fetching document from URL: $e');
+  void _getDocumentFromUrl(String? url) async {
+    if (url != null && url.isNotEmpty) {
+      final http.Response response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        setState(() {
+          // Get the document name from the URL
+          final Uri uri = Uri.parse(url);
+          final String? documentName =
+              uri.pathSegments.isNotEmpty ? uri.pathSegments.last : null;
+
+          // Handle the case where the document name is null or empty
+          _pickedFile = FilePickerResult([
+            PlatformFile(
+              name: documentName ?? "document",
+              size: response.contentLength ?? 0,
+              bytes: response.bodyBytes,
+            )
+          ]);
+        });
+      }
     }
   }
 
   void editCourse(BuildContext context, String courseId) async {
     // Validate form fields
-    if (_key.currentState!.validate()) {
-      try {
-        // Check if there's a new cover image selected
-        String? coverImageUrl;
-        if (newImage != null) {
-          print("Uploading new cover image...");
-          // Upload the new cover image
-          firebasestorage.Reference imageRef = firebasestorage
-              .FirebaseStorage.instance
-              .ref("course_${_titleController.text.trim()}");
-          firebasestorage.UploadTask uploadImageTask =
-              imageRef.putData(newImage!);
-          coverImageUrl = await (await uploadImageTask).ref.getDownloadURL();
-          print("New cover image uploaded: $coverImageUrl");
+    try {
+      if (_key.currentState!.validate()) {
+        try {
+          // Check if there's a new cover image selected
+          String? coverImageUrl;
+          if (newImage != null) {
+            print("Uploading new cover image...");
+            // Upload the new cover image
+            firebasestorage.Reference imageRef = firebasestorage
+                .FirebaseStorage.instance
+                .ref("course_${_titleController.text.trim()}");
+            firebasestorage.UploadTask uploadImageTask =
+                imageRef.putData(newImage!);
+            coverImageUrl = await (await uploadImageTask).ref.getDownloadURL();
+            print("New cover image uploaded: $coverImageUrl");
+          }
+
+          // Check if there's a new document selected
+          String? documentUrl;
+          if (_pickedFile != null) {
+            print("Uploading new document...");
+            // Upload the new document
+            FilePickerResult result = _pickedFile!;
+            firebasestorage.Reference docRef = firebasestorage
+                .FirebaseStorage.instance
+                .ref("course_docs/${result.files.first.name}");
+            firebasestorage.UploadTask uploadDocTask =
+                docRef.putData(result.files.first.bytes!);
+            documentUrl = await (await uploadDocTask).ref.getDownloadURL();
+            print("New document uploaded: $documentUrl");
+          }
+
+          // Prepare updated course data
+          Map<String, dynamic> data = {
+            "title": _titleController.text.trim(),
+            "overview": _overViewController.text.trim(),
+            "amount": _amountController.text.trim(),
+            // Update cover image URL if changed
+            if (coverImageUrl != null) "photo": coverImageUrl,
+            // Update document URL if changed
+            if (documentUrl != null) "document": documentUrl,
+          };
+
+          print("Updated course data: $data");
+
+          // Dispatch edit course event
+          context.read<CourseBloc>().add(EditCourseEvent(
+                data: data,
+                CourseId: courseId,
+              ));
+
+          // Show success message
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("Course updated successfully!"),
+            backgroundColor: Color(0xFF2E2E48),
+          ));
+
+          // Clear form fields
+          _titleController.clear();
+          _overViewController.clear();
+          _amountController.clear();
+          // Clear selected image and document
+          setState(() {
+            _pickedFile = null;
+            newImage = null;
+          });
+        } catch (e) {
+          print("Error updating course: $e");
+          // Show error message
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("Error updating course. Please try again later."),
+            backgroundColor: Colors.red,
+          ));
         }
-
-        // Check if there's a new document selected
-        String? documentUrl;
-        if (_pickedFile != null) {
-          print("Uploading new document...");
-          // Upload the new document
-          FilePickerResult result = _pickedFile!;
-          firebasestorage.Reference docRef = firebasestorage
-              .FirebaseStorage.instance
-              .ref("course_docs/${result.files.first.name}");
-          firebasestorage.UploadTask uploadDocTask =
-              docRef.putData(result.files.first.bytes!);
-          documentUrl = await (await uploadDocTask).ref.getDownloadURL();
-          print("New document uploaded: $documentUrl");
-        }
-
-        // Prepare updated course data
-        Map<String, dynamic> data = {
-          "title": _titleController.text.trim(),
-          "overview": _overViewController.text.trim(),
-          "amount": _amountController.text.trim(),
-          // Update cover image URL if changed
-          if (coverImageUrl != null) "photo": coverImageUrl,
-          // Update document URL if changed
-          if (documentUrl != null) "document": documentUrl,
-        };
-
-        print("Updated course data: $data");
-
-        // Dispatch edit course event
-        context.read<CourseBloc>().add(EditCourseEvent(
-              data: data,
-              CourseId: courseId,
-            ));
-
-        // Show success message
+      } else {
+        // Form validation failed
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text("Course updated successfully!"),
-          backgroundColor: Colors.green,
-        ));
-
-        // Clear form fields
-        _titleController.clear();
-        _overViewController.clear();
-        _amountController.clear();
-        // Clear selected image and document
-        setState(() {
-          _pickedFile = null;
-          newImage = null;
-        });
-      } catch (e) {
-        print("Error updating course: $e");
-        // Show error message
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text("Error updating course. Please try again later."),
+          content: Text("Please fill all the required fields."),
           backgroundColor: Colors.red,
         ));
       }
-    } else {
-      // Form validation failed
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Please fill all the required fields."),
+        content: Text(e.toString()),
         backgroundColor: Colors.red,
       ));
     }
   }
+}
+
+class TextFieldProgress {
+  final TextEditingController controller;
+  double progress;
+
+  TextFieldProgress({required this.controller, this.progress = 0.0});
 }
